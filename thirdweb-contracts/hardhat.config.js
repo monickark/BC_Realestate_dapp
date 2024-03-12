@@ -1,8 +1,8 @@
 require("@matterlabs/hardhat-zksync-solc");
+require("@nomiclabs/hardhat-waffle");
 
-/** @type import('hardhat/config').HardhatUserConfig */
-const PRIVATE_KEY = "e16582b7a2bab7c2cba20da6dad4d177a7d872a2049757dbce780cc3a26d8e6e"
-const RPC_URL = "https://rpc.ankr.com/polgon_mumbai"
+const PRIVATE_KEY = "e16582b7a2bab7c2cba20da6dad4d177a7d872a2049757dbce780cc3a26d8e6e";
+const RPC_URL = "https://rpc.ankr.com/polgon_mumbai";
 
 module.exports = {
   defaultNetwork: "polygon_mumbai",
@@ -20,8 +20,8 @@ module.exports = {
       chainId: 80001,
     },
     polygon_mumbai: {
-      rpc_url : RPC_URL,
-      accounts: [`[0x${PRIVATE_KEY}`]
+      url : RPC_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
     }
   },
   paths: {
