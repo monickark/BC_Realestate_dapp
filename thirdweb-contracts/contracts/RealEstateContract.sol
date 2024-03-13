@@ -32,7 +32,7 @@ contract RealEstateContract {
     event PropertyPurchased(address owner, uint256 propId, uint256 price);
 
     // variables
-    uint256 propertyCount;
+    uint256 public propertyCount;
 
     function listProperty (
         address _owner,
@@ -45,7 +45,7 @@ contract RealEstateContract {
         
         require(_price > 0, "Price should be greater than 0");
         
-        uint256 propId = propertyCount++;
+        uint256 propId = propertyCount+1;
         Property storage property = properties[propId];
         property.propId = propId;
         property.owner = _owner;
@@ -54,7 +54,7 @@ contract RealEstateContract {
         property.category = _category;
         property.images = _images;
         property.propAddr = _propAddr;
-
+        propertyCount++;
         emit PropertyListed(property.owner, property.propId, property.price);
         return property.propId;
     }
@@ -69,7 +69,6 @@ contract RealEstateContract {
 
         Property storage property = properties[_propId];
         require(property.owner == msg.sender, "Only owner can update");
-        property.owner = msg.sender;
         property.propTitle =_propTitle;
         property.category = _category;
         property.images = _images;
@@ -79,11 +78,11 @@ contract RealEstateContract {
 
     function updatePrice (
         uint256 _propId,
-        address _owner,
         uint256 _price 
     ) external returns(string memory) {
         Property storage property = properties[_propId];
-        require(property.owner == _owner, "Only owner can update");
+        require(property.owner == msg.sender, "Only owner can update");
+        require(_price > 0, "Price should be greater than 0");
         property.price = _price;
         return "Price updated successfully";
     }
@@ -104,7 +103,7 @@ contract RealEstateContract {
 
     function getProperty (
         uint256 _propId
-    ) external payable returns(Property memory) {
+    ) external view returns(Property memory) {
         Property storage property = properties[_propId];
         return property;
     }
@@ -133,16 +132,13 @@ contract RealEstateContract {
         Property[] memory retArr = new Property[](retArrSize);
         uint256 curIndex;
 
-        for(uint i=0; i<propLength; i++) {
-            curIndex += 1;
+        for(uint i=0; i< propLength; i++) {
             Property storage prop = properties[i+1];
-            if(prop.owner == _user) {               
-                Property storage property = properties[i+1];
-                retArr[curIndex] = property;
+            if(prop.owner == _user) {      
+                retArr[curIndex] = prop;
+                curIndex += 1;         
             }
         }
-
         return retArr;
     }
 }
-
