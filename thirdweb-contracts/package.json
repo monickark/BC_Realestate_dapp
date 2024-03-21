@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@matterlabs/hardhat-zksync-solc": "^0.3.17",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
     "@types/chai": "^4.3.12",
     "hardhat": "^2.13.0"
   },
@@ -16,6 +17,7 @@
     "chai": "^5.1.0",
     "mocha": "^10.3.0",
     "save-dev": "^0.0.1-security",
+    "thirdweb": "^0.13.52",
     "zksync-web3": "^0.14.3"
   }
 }
