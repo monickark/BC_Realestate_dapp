@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import { useAddress, useContract, useMetamask, useContractEvents, useContractRead, useContractWrite } from '@thirdweb-dev/react'
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 const StateContext = createContext();
 
@@ -30,10 +30,29 @@ export const StateContextProvider = ({children}) => {
     }
 
     //2.Retrieve Property    
-    const { data, isLoading1 } = useContractRead(contract, "getAllProperties", [{{args}}])
-
+    const getAllProperties = async () => {
+      try{
+      const data = await contract.call("getAllProperties");
+      console.log("data: ", data)
+      const parsedProperties = data.map((property,i) => ({
+        propId : ethers.utils.formatUnits(property.propId, 0),
+        owner : property.owner,
+        price : ethers.utils.formatEther(property.price),
+        propTitle : property.propTitle,
+        category : property.category,
+        images : property.images,
+        propAddr : property.propAddr
+      }))
+      console.log("parsedProperties :", parsedProperties);
+      return parsedProperties;
+    } catch(err) {
+      console.error(err)
+    }
+    }
+              
   return (
-    <StateContext.Provider value = {{contract, address, connect, realEstate, createPropertyFunction}}>
+    <StateContext.Provider value = {{contract, address, connect, realEstate, 
+            createPropertyFunction, getAllProperties}}>
        {children}
     </StateContext.Provider>
   );

@@ -5,7 +5,7 @@ import { useStateContext } from '../context';
 import { checkIfImage } from '@/utils';
 
 const index = () => {
-  const {contract, address, connect, realEstate, createPropertyFunction} = useStateContext();
+  const {contract, address, connect, realEstate, createPropertyFunction, getAllProperties} = useStateContext();
   const[isLoading, setIsLoading] = useState(false)
   const[properties, setProperties] = useState([])
   const[form, setForm] = useState({
@@ -24,7 +24,7 @@ const index = () => {
 
   const handleSubmit = async(e) => {
     alert("1. handleSubmit");
-    e.preventDefault();
+    e.prevendivefault();
     alert("2. handleSubmit");
     checkIfImage(form.images, async(exists) => {
         if(exists) {
@@ -40,6 +40,17 @@ const index = () => {
         }
     }); 
   }
+
+  const fetchProperty = async () => {
+    setIsLoading(true);
+    const data = await getAllProperties();
+    console.log("data in index page :", data);
+    setProperties(data);
+    setIsLoading(true);
+  }
+  useEffect(() => {
+    if(contract)  fetchProperty();
+  }, [contract, address])
  
   return  <div> 
          <h1>{realEstate} </h1>       
@@ -71,6 +82,19 @@ const index = () => {
             </div>
               <button type="submit">Submit</button>
          </form>
+         <h1>Properties List</h1>
+         { properties ? properties.map((data, i) => (
+            <>
+             <div> PropId:  {data.propId} </div>
+             <div> Owner:  {data.owner} </div>
+              <div> price:  {data.price} </div>
+              <div> propTitle:  {data.propTitle} </div>
+              <div> category:  {data.category} </div>
+              <div> images:  {data.images} </div>
+              <div> propAddr:  {data.propAddr} </div>
+              <hr/>
+            </>              
+        )): null}
     </div>;
 };
 export default index;
