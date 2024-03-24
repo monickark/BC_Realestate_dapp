@@ -22,3 +22,6 @@ npm i @thirdweb-dev/react@^3
 npm i @thirdweb-dev/sdk@^3
 
 ```
+
+## Styling
+npm install @mui/material-nextjs @emotion/cache //install materialui

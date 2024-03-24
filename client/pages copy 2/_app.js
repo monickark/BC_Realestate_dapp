@@ -1,10 +1,7 @@
 import "@/styles/globals.css";
-import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
-import {StateContextProvider} from "../context";
 
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { Roboto } from 'next/font/google'
-
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
@@ -22,20 +19,15 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
-  },
-  
+  }
 })
 
 const App = ({ Component, pageProps }) => {
   return (
-    <ThirdwebProvider activeChain={ChainId.Mumbai} >
-    <ThemeProvider theme={theme}>      
-    <CssBaseline/>
-      <StateContextProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline/>
           <Component {...pageProps} />
-      </StateContextProvider>
         </ThemeProvider>
-    </ThirdwebProvider>
 
   )
 }
