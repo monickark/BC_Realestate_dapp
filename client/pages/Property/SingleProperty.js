@@ -3,11 +3,29 @@ import { ethers } from 'ethers';
 
 import { useStateContext } from "@/context";
 import { checkIfImage } from "@/utils";
+import { useRouter } from "next/router";
 
 
-const CreateProperty = () => {
-  const { createPropertyFunction } = useStateContext();
-  const [isLoading, setIsLoading] = useState(false);
+const SingleProperty = () => {  
+  const {contract, address, getSingleProperty} = useStateContext();
+  const[isLoading, setIsLoading] = useState(false)
+  const[property, setProperty] = useState({});
+  const router = useRouter();
+
+    const fetchSingleProperty = async () => {
+      console.log("Query Obj Id : ", router.query.id);
+      setIsLoading(true);
+      const data = await getSingleProperty(router.query.id);
+      console.log("data in index page :", data);
+      setProperty(data);
+      setIsLoading(true);
+    }
+    useEffect(() => {
+      if(contract)  fetchSingleProperty();
+    }, [contract, address])
+
+
+
   const [form, setForm] = useState({
     owner: "",
     propTitle: "",
@@ -28,14 +46,11 @@ const CreateProperty = () => {
     alert("2. handleSubmit");
     checkIfImage(form.images, async (exists) => {
       if (exists) {
-        alert("image exists");
         setIsLoading(true);
-        alert("b4 func");
         await createPropertyFunction({
           ...form,
           price: ethers.utils.parseUnits(form.price, 18),
         });
-        alert("after func");
         setIsLoading(false);
         alert("data saved successfully...")
       } else {
@@ -54,18 +69,10 @@ const CreateProperty = () => {
        
           <form onSubmit={(e) => handleSubmit(e)}>
           <h3 className="text-3xl md:text-4xl font-bold text-gray-900 !leading-[1.4]">
-          Create Property</h3>
+          Update Property</h3>           
             <div>
               <input
-                type="text"
-                placeholder="Owner Address" 
-                className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
-                onChange={(e) => handleFormFieldChange("owner", e)}
-              />
-            </div>
-            <div>
-              <input
-                type="text"
+                type="text" value={property.propTitle}
                 placeholder="PropertyTitle"
                 className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
                 onChange={(e) => handleFormFieldChange("propTitle", e)}
@@ -73,14 +80,7 @@ const CreateProperty = () => {
             </div>
             <div>
               <input
-                type="text"
-                placeholder="PropertyDescription"  className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
-                onChange={(e) => handleFormFieldChange("propDesc", e)}
-              />
-            </div>
-            <div>
-              <input
-                type="text"
+                type="text" value={property.propAddr}
                 placeholder="PropertyAddr"
                 className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
                 onChange={(e) => handleFormFieldChange("propAddr", e)}
@@ -88,15 +88,13 @@ const CreateProperty = () => {
             </div>
             <div>
               <input
-                type="text"
+                type="text" value={property.price} readOnly
                 placeholder="Price"  className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
-        
-                onChange={(e) => handleFormFieldChange("price", e)}
               />
             </div>
             <div>
               <input
-                type="text"
+                type="text" value={property.category}
                 placeholder="category"  className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
         
                 onChange={(e) => handleFormFieldChange("category", e)}
@@ -104,15 +102,14 @@ const CreateProperty = () => {
             </div>
             <div>
               <input
-                type="text"
+                type="text" value={property.images}
                 placeholder="image"  className="block h-14 mt-5 mx-auto w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-500"
         
                 onChange={(e) => handleFormFieldChange("images", e)}
               />
             </div>
             <button  className="block mt-6 h-14 mx-auto w-full px-6 py-3 leading-none font-semibold rounded-lg text-white bg-gray-900 focus:outline-none"
-      
-      type="submit">Submit</button>
+            type="submit">Update</button>
           </form>
         </div>
       </div>
@@ -121,4 +118,4 @@ const CreateProperty = () => {
   );
 };
 
-export default CreateProperty;
+export default SingleProperty;

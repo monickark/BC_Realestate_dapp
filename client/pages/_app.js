@@ -4,12 +4,8 @@ import {StateContextProvider} from "../context";
 
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { Roboto } from 'next/font/google'
+import ResponsiveAppBar from "./AppBar/ResponsiveAppBar";
 
-
-const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
-  subsets: ['latin']
-});
 
 const theme = createTheme({
   palette: {
@@ -19,19 +15,16 @@ const theme = createTheme({
     primary:{
       main:'#fff'
     }
-  },
-  typography: {
-    fontFamily: roboto.style.fontFamily,
-  },
-  
+  }
 })
 
 const App = ({ Component, pageProps }) => {
   return (
-    <ThirdwebProvider activeChain={ChainId.Mumbai} >
+    <ThirdwebProvider >
     <ThemeProvider theme={theme}>      
     <CssBaseline/>
       <StateContextProvider>
+      <ResponsiveAppBar></ResponsiveAppBar>
           <Component {...pageProps} />
       </StateContextProvider>
         </ThemeProvider>

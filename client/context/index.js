@@ -1,20 +1,30 @@
 import React, { createContext, useContext } from 'react'
-import { useAddress, useContract, useMetamask, useContractEvents, useContractRead, useContractWrite } from '@thirdweb-dev/react'
 import { BigNumber, ethers } from 'ethers';
-
+import { createThirdwebClient, getContract, readContract, resolveMethod, prepareContractCall, sendTransaction } from "thirdweb";
+import { defineChain } from "thirdweb/chains";
+import { useAddress, useContractWrite, useMetamask } from '@thirdweb-dev/react';
+import { useSendTransaction } from "thirdweb/react";
 const StateContext = createContext();
 
+export const client = createThirdwebClient({ 
+  clientId: "1807681d1aa0a1f2c8656e3ebc0256d1" 
+});
+
+export const contract = getContract({ 
+  client, 
+  chain: defineChain(80002), 
+  address: "0xdea1bd192fdf677d7545bf72B2Ad9096284E214b"
+});
+
 export const StateContextProvider = ({children}) => {
-  
-    const {contract} = useContract("0x1d1062f57b65Fc578879ba4d58A7d2fC66cF3B00");
     console.log(contract);
     const address = useAddress();
     const connect = useMetamask();
     const realEstate = "Real Estate Dapp";
 
     // FUNCTIONS
-    //1.List Property
-    const { mutateAsync: listProperty, isLoading } = useContractWrite(contract, "listProperty")
+    //1.List Property    
+  
     const createPropertyFunction = async (form) => {
       const { owner, propTitle,  propDesc, propAddr, price, category, images} = form;
       console.log(form);
@@ -22,8 +32,13 @@ export const StateContextProvider = ({children}) => {
       console.log("propTitle", propTitle);
       console.log("propDesc", propDesc);
       try {
-        const data = await listProperty({ args: [owner, price, propTitle, category, images, propAddr]});
-        console.info("contract call successs", data);
+        const transaction = await prepareContractCall({ 
+          contract, 
+          method: resolveMethod("listProperty"), 
+          params: [owner, price, propTitle, category, images, propAddr] 
+        });
+        const { transactionHash } = await sendTransaction({transaction, account});
+        console.info("contract call successs", transactionHash);
       } catch (err) {
         console.error("contract call failure", err);
       }
@@ -32,7 +47,11 @@ export const StateContextProvider = ({children}) => {
     //2.Retrieve Property    
     const getAllProperties = async () => {
       try{
-      const data = await contract.call("getAllProperties");
+      const data = await readContract({ 
+        contract, 
+        method: resolveMethod("getAllProperties"), 
+        params: [] 
+      })
       console.log("data: ", data)
       const parsedProperties = data.map((property,i) => ({
         propId : ethers.utils.formatUnits(property.propId, 0),
@@ -49,10 +68,36 @@ export const StateContextProvider = ({children}) => {
       console.error(err)
     }
     }
+
+    //3.Retrieve Single Property    
+     const getSingleProperty = async (propId) => {
+      try{
+        console.log("rop id b4 contract call: ", propId)
+        const { data } = useReadContract({ 
+          contract, 
+          method: resolveMethod("getProperty"), 
+          params: [propId] 
+        });
+      console.log("data: ", data)
+      const parsedProperty = data  => ({
+        propId : ethers.utils.formatUnits(data.propId, 0),
+        owner : data.owner,
+        price : data.utils.formatEther(property.price),
+        propTitle : data.propTitle,
+        category : data.category,
+        images : data.images,
+        propAddr : data.propAddr
+      })
+      console.log("parsedProperties :", parsedProperty);
+      return parsedProperty;
+    } catch(err) {
+      console.error(err)
+    }
+    }
               
   return (
     <StateContext.Provider value = {{contract, address, connect, realEstate, 
-            createPropertyFunction, getAllProperties}}>
+            createPropertyFunction, getAllProperties, getSingleProperty}}>
        {children}
     </StateContext.Provider>
   );

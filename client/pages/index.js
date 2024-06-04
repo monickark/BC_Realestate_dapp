@@ -1,17 +1,11 @@
 
-import React, {useState, useEffect} from 'react';
-import { ethers } from 'ethers';
+import React from 'react';
 
-import { useStateContext } from '../context';
-import { checkIfImage } from '@/utils';
-import ListProperty from '@/pages/Property/CreateProperty';
-import ResponsiveAppBar from '@/pages/AppBar/ResponsiveAppBar';
 import CreateProperty from '@/pages/Property/CreateProperty';
-import PropertiesList from '@/pages/PropertiesList/PropertiesList';
+import PropertiesList from '@/pages/Property/PropertiesList';
 
 const index = () => {
-  return  <div>       
-          <ResponsiveAppBar></ResponsiveAppBar>
+  return  <div>
           <CreateProperty></CreateProperty>
           <PropertiesList></PropertiesList>        
     </div>;

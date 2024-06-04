@@ -20,7 +20,7 @@ import Link from 'next/link';
 
 function ResponsiveAppBar() {
   
-  const {connect, realEstate} = useStateContext();
+  const {connect, realEstate, address} = useStateContext();
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -31,7 +31,6 @@ function ResponsiveAppBar() {
               mr: 2,
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
@@ -39,19 +38,22 @@ function ResponsiveAppBar() {
             {realEstate}
           </Typography>
                 <MenuItem >
-                <Link href={{ pathname: "/Create" }} legacyBehavior >
+                <Link href={{ pathname: "/Property/CreateProperty" }} legacyBehavior >
                   <a>Create Property</a>
                 </Link>
                   
                 </MenuItem>
                 <MenuItem >
-                  <Typography textAlign="center">List Property</Typography>
-                </MenuItem>
-                <MenuItem onClick = {() => connect()}>
-                  <Typography textAlign="right">Connect Wallet</Typography>
-                </MenuItem>
+                <Link href={{ pathname: "/Property/PropertiesList" }} legacyBehavior >
+                  <a>Properties List</a>
+                </Link>
+                </MenuItem> 
+                <div className="wallet">
+                {address ? <span className="wallet-address">{address}</span> :  <MenuItem  className="wallet-button" onClick = {() => connect()}> Connect Wallet </MenuItem> }                  
+                </div>               
+                
          </Toolbar>
-
+             
       </Container>
     </AppBar>
   );
